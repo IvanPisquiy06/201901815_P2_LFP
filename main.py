@@ -37,7 +37,75 @@ def carga_window():
     button = ttk.Button(window, text="Select", command=select_file)
     button.pack()
 
-def general_info():
+def general_info_automata():
+    global file_content
+
+    lineas = file_content.splitlines()
+    nombres = []
+
+    grupos = []
+    grupo_actual = []
+
+    for elemento in lineas:
+        if elemento == "%":
+            grupos.append(grupo_actual)
+            grupo_actual = []
+        else:
+            grupo_actual.append(elemento)
+
+    for i in range(len(grupos)):
+        nombres.append(grupos[i][0])
+
+    def show_info():
+        gramatica = combobox.current()
+
+        nombre = grupos[gramatica][0]
+        alfabeto = grupos[gramatica][1].split(',')
+        simbolos = grupos[gramatica][2].split(',')
+        estados = grupos[gramatica][3]
+        inicial = grupos[gramatica][4]
+        aceptacion = grupos[gramatica][5]
+        transiciones = grupos[gramatica][6:]
+
+        info_sub = Tk()
+        info_sub.title("Información General")
+
+        window = ttk.Frame(info_sub, padding=50)
+        window.grid()
+
+        ttk.Label(window, text="Nombre:").grid(column=0, row=0)
+        ttk.Label(window, text=nombre).grid(column=1, row=0)
+        ttk.Label(window, text="Alfabeto").grid(column=0, row=1)
+        ttk.Label(window, text=alfabeto).grid(column=1, row=1)
+        ttk.Label(window, text="Simbolos de pila:").grid(column=0, row=2)
+        ttk.Label(window, text=simbolos).grid(column=1, row=2)
+        ttk.Label(window, text="Estados").grid(column=0, row=3)
+        ttk.Label(window, text=estados).grid(column=1, row=3)
+        ttk.Label(window, text="Estado inicial").grid(column=0, row=4)
+        ttk.Label(window, text=inicial).grid(column=1, row=4)
+        ttk.Label(window, text="Estado de aceptacion").grid(column=0, row=5)
+        ttk.Label(window, text=aceptacion).grid(column=1, row=5)
+        ttk.Label(window, text="Transiciones:").grid(column=0, row=6)
+        for i in range(len(transiciones)):
+            ttk.Label(window, text=transiciones[i]).grid(column=1, row=i+6)
+
+        info_main.destroy()
+
+    info_main = Tk()
+    info_main.title("Información General")
+
+    window = ttk.Frame(info_main, padding=50)
+    window.grid()
+
+    ttk.Label(window, text="Elija una gramática")
+
+    combobox = ttk.Combobox(window, values=nombres)
+    combobox.current(0)
+    combobox.grid()
+
+    ttk.Button(window, text="Siguiente", command=show_info).grid()
+
+def general_info_gramatica():
     global file_content
 
     lineas = file_content.splitlines()
@@ -107,7 +175,7 @@ def gramatica_window():
     window.grid()
 
     ttk.Button(window, text="Cargar Archivo", command=carga_window).grid(pady=10)
-    ttk.Button(window, text="Información General", command=general_info).grid(pady=10)
+    ttk.Button(window, text="Información General", command=general_info_gramatica).grid(pady=10)
     ttk.Button(window, text="Árbol de Derivación").grid(pady=10)
     ttk.Button(window, text="Cerrar", command=gramatica.destroy).grid(pady=10)
 
@@ -118,8 +186,8 @@ def automatas_window():
     window = ttk.Frame(automatas, padding=50)
     window.grid()
 
-    ttk.Button(window, text="Cargar Archivo").grid(pady=10)
-    ttk.Button(window, text="Información General").grid(pady=10)
+    ttk.Button(window, text="Cargar Archivo", command=carga_window).grid(pady=10)
+    ttk.Button(window, text="Información General", command=general_info_automata).grid(pady=10)
     ttk.Button(window, text="Validar Cadena").grid(pady=10)
     ttk.Button(window, text="Ruta de Validación").grid(pady=10)
     ttk.Button(window, text="Paso a Paso").grid(pady=10)
